@@ -1,0 +1,43 @@
+Label {
+	align: center middle;
+	border: round white;
+	height: 100%;
+	width: 100%;
+	content-align: center middle;
+}
+
+Container {
+	border: round white;
+	align: center middle;
+	padding: 1 2;
+}
+
+VerticalGroup {
+	border: round white;
+	align: center middle;
+	padding: 1 2;
+
+}
+
+HorizontalGroup {
+	border: round white;
+	align: center middle;
+	padding: 1 2;
+
+}
+
+#LoadingScreenContainer {
+	border: round white;
+	align: center middle;
+	padding: 1 2;
+}
+
+#DashboardScreenContainer {
+	layout: grid;
+	grid-size: 2;
+}
+
+#LeftTextArea {
+	row-span: 2;
+	border: round white;
+}
