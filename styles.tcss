@@ -1,6 +1,5 @@
 Label {
 	align: center middle;
-	border: round white;
 	height: 100%;
 	width: 100%;
 	content-align: center middle;
@@ -30,6 +29,7 @@ HorizontalGroup {
 	border: round white;
 	align: center middle;
 	padding: 1 2;
+	layout: horizontal;
 }
 
 #DashboardScreenContainer {
@@ -37,7 +37,12 @@ HorizontalGroup {
 	grid-size: 2;
 }
 
-#LeftTextArea {
-	row-span: 2;
+#LoadingProcessProgressGroup {
+	layout: vertical;
+	width: 1fr;
+	
+}
+
+ProgressBar {
 	border: round white;
 }
