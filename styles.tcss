@@ -44,5 +44,6 @@ HorizontalGroup {
 }
 
 ProgressBar {
+	align: center middle;
 	border: round white;
 }
