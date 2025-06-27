@@ -1,0 +1,369 @@
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.page { display: none; }
+.page.active { display: block; }
+
+
+  .rightside-bulletlist ul{
+
+    direction: rtl;
+    margin-left: auto; /* Pushes list to right */
+    width: fit-content;
+    padding-left: 1em; /* Space for bullets */
+    list-style-position: inside; /* Bullets stay left of text */
+    text-align: right;
+    list-style-position: inside; /* Ensures bullets stay aligned */
+
+  }
+
+#purpose p{
+  font-size: 0.7em;
+  color: #333;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  padding: 0px;
+}
+
+.timeline {
+  left: auto;
+  position: relative;
+  margin: 0 50px;
+  padding: 20px 0;
+  max-width: 600px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #9f9f9f;
+}
+
+.timeline-event {
+  position: relative;
+  margin-bottom: 40px;
+  padding-left: 40px;
+
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.timeline-event.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.timeline-event::before {
+  content: '';
+  position: absolute;
+  top: 90px;
+  left: -8px;
+  width: 20px;
+  height: 20px;
+  background: #c1c1c1;
+  border-radius: 50%;
+  border: 3px solid #fff;
+}
+
+.timeline-date {
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: #f9f9f9;
+}
+
+.timeline-content {
+  background: #333;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-left: 10px;
+}
+
+.timeline-content h3 {
+  margin-top: 0;
+  color: #f9f9f9;
+}
+  
+/*WIP banner*/
+@keyframes fadeIn {
+	0% {opacity:0;}
+	70% {opacity:0;}
+	100% {opacity:0.9;}
+  }
+  
+  @-moz-keyframes fadeIn {
+	0% {opacity:0;}
+	70% {opacity:0;}
+	100% {opacity:0.9;}
+  }
+  
+  @-webkit-keyframes fadeIn {
+	0% {opacity:0;}
+	70% {opacity:0;}
+	100% {opacity:0.9;}
+  }
+  
+  @-o-keyframes fadeIn {
+	0% {opacity:0;}
+	70% {opacity:0;}
+	100% {opacity:0.9;}
+  }
+  
+  @-ms-keyframes fadeIn {
+	0% {opacity:0;}
+	70% {opacity:0;}
+	100% {opacity:0.9;}
+  }
+/*wip banner*/
+
+@-moz-keyframes fadeOut { 
+	0% { opacity: 0.9; visibility: visible; }  
+	50% { opacity: 0; visibility: hidden; }} 
+@-webkit-keyframes fadeOut { 
+	0% { opacity: 0.9; visibility: visible; }  
+	50% { opacity: 0; visibility: hidden; }} 
+@-ms-keyframes fadeOut { 
+	0% { opacity: 0.9; visibility: visible; } 
+	50% { opacity: 0; visibility: hidden; }} 
+@-keyframes fadeOut { 
+	0% { opacity: 0.9; visibility: visible; } 
+	50% { opacity: 0; visibility: hidden; }} 
+
+/* wip-banner */
+#wip-banner {
+	animation: fadeIn 3s;
+	-webkit-animation: fadeIn 3s;
+	-moz-animation: fadeIn 3s;
+	-o-animation: fadeIn 3s;
+	-ms-animation: fadeIn 3s;
+    
+    z-index: 1;
+    background-color: #272727;
+    overflow: hidden;
+    position: fixed;
+    left:20%;
+    right:20%;
+    width: 60%;
+    bottom: 10px;
+    float: center;
+    border-radius: 5px;
+	opacity: 0.9;
+}
+
+#wip-banner p2 {
+    float: center;
+    display: block;
+    color: #9f9f9f;
+    padding: 5px 60px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+#wip-banner a {
+	cursor: pointer;
+    position: relative;
+    float: right;
+    padding: 0px 0px;
+    text-decoration: solid;
+    color: #c1c1c1;
+}
+
+#wip-banner-fade-out {
+	animation: fadeOut 3s;
+	-webkit-animation: fadeOut 3s;
+	-moz-animation: fadeOut 3s;
+	-o-animation: fadeOut 3s;
+	-ms-animation: fadeOut 3s;
+
+	z-index: 1;
+    background-color: #272727;
+    overflow: hidden;
+    position: fixed;
+    left:20%;
+    right:20%;
+    width: 60%;
+    bottom: 10px;
+    float: center;
+    border-radius: 5px;
+	opacity: 0.9;
+	visibility: hidden;
+}
+
+#wip-banner-fade-out p2 {
+    float: center;
+    display: block;
+    color: #9f9f9f;
+    padding: 5px 60px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+#wip-banner-fade-out a {
+	cursor: pointer;
+    position: relative;
+    float: right;
+    padding: 0px 0px;
+    text-decoration: solid;
+    color: #c1c1c1;
+}
+
+
+/*MOBILEMOBILEMOBILEMOBILEMOBILEMOBILEMOBILEMOBILE*/
+
+#wip-banner-mobile {
+	visibility: hidden;
+	animation: fadeIn 3s;
+	-webkit-animation: fadeIn 3s;
+	-moz-animation: fadeIn 3s;
+	-o-animation: fadeIn 3s;
+	-ms-animation: fadeIn 3s;
+    
+    z-index: 1;
+    background-color: #272727;
+    overflow: hidden;
+    position: fixed;
+    left:7%;
+    right:7%;
+    width: 86%;
+    bottom: 10px;
+    float: center;
+    border-radius: 5px;
+	opacity: 0.9;
+}
+
+#wip-banner-mobile p2 {
+    float: center;
+    display: block;
+    color: #9f9f9f;
+    padding: 5px 24px;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+#wip-banner-mobile a {
+	cursor: pointer;
+    position: relative;
+    float: right;
+    padding: 0px 0px;
+    text-decoration: solid;
+    color: #c1c1c1;
+}
+
+#wip-banner-fade-out-mobile {
+	animation: fadeOut 3s;
+	-webkit-animation: fadeOut 3s;
+	-moz-animation: fadeOut 3s;
+	-o-animation: fadeOut 3s;
+	-ms-animation: fadeOut 3s;
+
+	z-index: 1;
+    background-color: #272727;
+    overflow: hidden;
+    position: fixed;
+    left:10%;
+    right:10%;
+    width: 80%;
+    bottom: 10px;
+    float: center;
+    border-radius: 5px;
+	opacity: 0.9;
+	visibility: hidden;
+}
+
+#wip-banner-fade-out-mobile p2 {
+    float: center;
+    display: block;
+    color: #9f9f9f;
+    padding: 5px 24px;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+#wip-banner-fade-out-mobile a {
+	cursor: pointer;
+    position: relative;
+    float: right;
+    padding: 0px 0px;
+    text-decoration: solid;
+    color: #c1c1c1;
+}
+
+/*MAKEITSMARTMAKEITSMARTMAKEITSMARTMAKEITSMARTLULLLLLL*/
+
+@media screen and (max-width: 980px) {
+
+	#wip-banner {
+		visibility: hidden;
+	}
+
+	#wip-banner-mobile {
+		visibility: visible;
+	}
+}
+
+
+
+ /* blinking cursor */
+ .cursor {
+	font-weight: 700;
+	font-size: 1.2em;
+	color: white;
+	-webkit-animation: 1s blink step-end infinite;
+	-moz-animation: 1s blink step-end infinite;
+	-ms-animation: 1s blink step-end infinite;
+	-o-animation: 1s blink step-end infinite;
+	animation: 1s blink step-end infinite;
+  }
+  
+  @keyframes "blink" {
+	from, to {
+      color: transparent;
+    }
+    50% {
+      color: white;
+	}
+  }
+  
+  @-moz-keyframes blink {
+	from, to {
+	  color: transparent;
+	}
+	50% {
+	  color: white;
+	}
+  }
+  
+  @-webkit-keyframes "blink" {
+	from, to {
+	  color: transparent;
+	}
+	50% {
+	  color: white;
+	}
+  }
+  
+  @-ms-keyframes "blink" {
+	from, to {
+	  color: transparent;
+	}
+	50% {
+	  color: white;
+	}
+  }
+  
+  @-o-keyframes "blink" {
+	from, to {
+	  color: transparent;
+	}
+	50% {
+	  color: white;
+	}
+  }
+  
