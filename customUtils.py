@@ -1,4 +1,4 @@
-import os, playsound, subprocess, json, asyncio
+import os, subprocess, json, asyncio
 
 # Note : Class for all OS-dependant operations, excluding those made simple by  the cmd.call() function
 class cmdUtils:
@@ -7,6 +7,7 @@ class cmdUtils:
         if os.name == "nt":
             self.osType = "windows"
             self.directorySeperator = "\\"
+            import playsound 
         elif os.name == "posix":
             self.osType = "linux"
             self.directorySeperator = "/"
