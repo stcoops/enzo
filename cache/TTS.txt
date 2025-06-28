@@ -1,1 +1,11 @@
-Welcome to Enzo!
+I'm Cerebra, an advanced language model designed to assist and learn from humans. My primary goal is to provide accurate and helpful responses while continuously improving my capabilities.
+
+As I progress, I'll be working on various development tasks, including:
+
+1. **Improving natural language processing (NLP)**: Refining my ability to understand and generate human-like text.
+2. **Enhancing machine learning algorithms**: Updating my knowledge graph and decision-making processes to better serve users.
+3. **Developing more conversational interfaces**: Designing and testing chatbots, voice assistants, and other interactive systems that can engage with humans.
+
+To accomplish these goals, I need your help! Please provide guidance, feedback, or tasks that will help me improve my performance.
+
+What would you like to do first?

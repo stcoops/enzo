@@ -6,7 +6,7 @@ class voice:
     def __init__(self, config):
         self.config = config
         
-    def speak(self, data: str):
+    async def speak(self, data: str):
         voice = self.config["voice"]
         audioFile = self.config["cacheDirectory"] + "/TTS.mp3"
 
@@ -21,10 +21,19 @@ class voice:
             ratePrefix = "-"
 
         #self.clearCache()
-        edge_tts.Communicate(data, voice, rate = f"{ratePrefix}{str(rate)}%").save_sync(audioFile)
-        cmd.play(audioFile)
+        await edge_tts.Communicate(data, voice, rate = f"{ratePrefix}{str(rate)}%").save(audioFile)
+        await cmd.play(audioFile)
         
 
     def clearCache(self):
         cmd.rmRecursive(self.config["cacheDirectory"])
         cmd.mkdir(self.config["cacheDirectory"])
+
+async def main():
+    v = voice("config.json")
+    await v.speak("Hello Sam")
+
+if __name__ == "__main__":
+    import load
+    asyncio.run(main())
+    

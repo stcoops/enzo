@@ -91,13 +91,14 @@ class EnzoApp(App):
 
             model = model_select.value
             tts = tts_select.value
-            prompt = user_input.text
-
-            result = await self.llm.query(prompt, model=model)
+            self.llm.question = user_input.text
+            
+            await self.llm.query()
             if tts:
-                await self.tts.speak(result)
+                await self.tts.speak(self.llm.response)
 
-            ai_output.text = result
+            ai_output.text = self.llm.response
+            #ai_output.update()
     
 
 

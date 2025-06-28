@@ -132,6 +132,7 @@ class LoadingScreenApp(App):
         from ollamaUtils import model
         import asyncio
         self.llm = model(self.MODELconfig)
+        self.llm.startOllama()
         self.llm.createModel()
         self.llm.loadHistory()
 
