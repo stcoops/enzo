@@ -1,11 +1,26 @@
 from textual.app import App, ComposeResult
-from load import LoadingScreen
+from load import loadscreen
+import asyncio
 
-class EnzoApp(App):
-    CSS_PATH = "styles.tcss"
+def main():
+    ld =    loadscreen()
+    if ld is None:
+        print("Loading screen was interrupted or failed.")
+        return
+    tts = ld.tts
+    llm = ld.llm
+    APPConfig = ld.APPConfig 
+    MODELconfig = ld.MODELconfig
+    TTSconfig = ld.TTSconfig
+    
 
-    def on_mount(self):
-        self.push_screen(LoadingScreen())
+    from enzoApp import EnzoApp
+    app = EnzoApp(tts, llm, APPConfig, MODELconfig, TTSconfig)
+    app.run()
+
 
 if __name__ == "__main__":
-    EnzoApp().run()
+    main()
+    #app = EnzoApp()
+    #app.run()
+    #print("Enzo App is running.")

@@ -1,120 +1,104 @@
 from textual.app import App, ComposeResult
-from textual.containers import Container, HorizontalGroup, VerticalGroup, Center
 from textual.screen import Screen
-from textual.widgets import Label, Button, ProgressBar, Input, TextArea
-from rich.panel import Panel
-from textual.events import Event
-from textual import on 
-from textual.widget import Widget
-from rich.progress import Progress
-import time, asyncio
-"""
-WIDGETS
-"""
-class CustomProgressBar(Widget):
-    def render(self, percent: int):
-        bar = {("#")}
-        out = f"[{bar} {percent}%  ]"
-        return out
-
-"""
-SCREENS
-"""
-
-class WelcomeScreen(Screen):
-    def __init__(self) -> None:
-        super().__init__()
-
-    def compose(self) -> ComposeResult:
-        yield Container(
-            Label("Welcome to Enzo version Alpha 1.0.1")
-        )
-
-class LoadingScreen(Screen):
-    def __init__(self) -> None:
-        super().__init__()
-    
-    def compose(self) -> ComposeResult:
-        yield Container(
-            Label("Loading: "+  NAME, id = "CurrentTask")
-        )
-
-class DashboardScreen(Screen):
-    def __init__(self) -> None:
-        super().__init__()
-
-    def compose(self) -> ComposeResult:
-        with Container(id = "DashboardScreenContainer"):
-            yield TextArea("1", id = "LeftTextArea")
-            yield Label("2")
-            yield Label("3")
+from textual.widgets import Static, TextArea, Select, Button
+from textual.containers import Grid, Vertical
+from textual.reactive import reactive
 
 
-"""
-MODAL SCREENS
-"""
-"""
-APP CLASS
-"""
+
+
 class EnzoApp(App):
-    
-    #BINDINGS
-    CSS_PATH = "styles.tcss"
-    SCREENS = {"LoadingScreen": LoadingScreen, "MainDashboard": DashboardScreen}
+    CSS = """
+    Screen {
+        layout: grid;
+        grid-size: 2 2;
+        grid-columns: 30% 70%;
+        grid-rows: auto 1fr;
+        background: rgb(30, 30, 30);
+    }
 
-    def __init__(self) -> None:
+    #menu {
+        border: round rgb(120, 120, 120);
+        margin: 1;
+        align-horizontal: center;
+    }
+
+    #ai-output {
+        border: round rgb(120, 120, 120);
+        margin: 1;
+    }
+
+    #user-input {
+        border: round rgb(120, 120, 120);
+        margin: 1;
+        row-span: 2;  /* Spans both rows */
+    }
+
+    Select, Button {
+        width: 90%;
+        margin: 1 0;
+        color: rgb(210, 210, 210);
+        background: rgb(30, 30, 30);
+        keyline: double rgb(120, 120, 120);
+        border: round rgb(120, 120, 120);
+    }
+
+    TextArea {
+        background: rgb(30, 30, 30);
+        color: rgb(210, 210, 210);
+    }
+    """
+
+    def __init__(self, tts, llm, APPConfig, MODELconfig, TTSconfig) -> None:
+        self.tts = tts
+        self.llm = llm
+        self.APPConfig = APPConfig  
+        self.MODELconfig = MODELconfig
+        self.TTSconfig = TTSconfig 
         super().__init__()
-        
+
 
     def compose(self) -> ComposeResult:
-        yield Center(
-            VerticalGroup(
-                HorizontalGroup(
-                    Button("Welcome", id="welcome_button"),
-                    Button("Loading", id="loading_button"),
-                    Button("Dashboard", id="dashboard_button")
-                ),
-                Label("Enzo App - Alpha 1.0.1"),
-                Label("This is a demo app for Enzo."),
-                Label("Click the buttons to navigate.")
+        # Top-left: Menu container
+        yield Vertical(
+            Static(" Enzo version 1.0.1", id="menu-title"),
+            Select(
+                options=[("GPT-4o", "gpt-4o"), ("GPT-3.5", "gpt-3.5")],
+                prompt="Select Model",
+                id="model-select",
             ),
-        Label("Hello World"),
-        ProgressBar(id="progress_bar", total=100, show_eta=False, show_percentage=False))
-        
-        
-    #def on_mount(self) -> None:
-        #self.install_screen(WelcomeScreen(), "WelcomeScreen")
-        #self.install_screen(LoadingScreen(), "LoadingScreen")
-        #self.push_screen("LoadingScreen")
+            Select(
+                options=[("Voice 1", "voice1"), ("Voice 2", "voice2")],
+                prompt="TTS Voice",
+                id="tts-select",
+            ),
+            Button("Run AI Task", id="run-button"),
+            id="menu",
+        )
 
-"""
-MAIN CLASS
-"""
-def main(loop) -> None:
-    """Main function to run the EnzoApp."""
-    # Create an instance of the EnzoApp and run it.
-    # This will initialize the app and display the welcome screen.
-    ENZO = EnzoApp()
-    ENZO.run(loop=loop)
-            #self.app.switch_screen("LoadingScreen")
-    time.sleep(0.5)
-        
-    ENZO.push_screen(LoadingScreen())
-    i = 0
-    while i != 100:
-        time.sleep(0.03)
-        i += 1
-                
-        ENZO.query_one(ProgressBar).update(progress=i, total=100)
-        print(i)
+        # Right: User input text area (spans both rows)
+        yield TextArea("Type your AI prompt here...", id="user-input")
 
-if __name__ == '__main__':
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    try:
-        (main(loop=loop))
-    except KeyboardInterrupt:
-        pass
+        # Bottom-left: AI output area
+        yield TextArea("AI output will appear here...", id="ai-output", read_only=True)
+
+    async def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "run-button":
+            model_select = self.query_one("#model-select", Select)
+            tts_select = self.query_one("#tts-select", Select)
+            user_input = self.query_one("#user-input", TextArea)
+            ai_output = self.query_one("#ai-output", TextArea)
+
+            model = model_select.value
+            tts = tts_select.value
+            prompt = user_input.text
+
+            result = await self.llm.query(prompt, model=model)
+            if tts:
+                await self.tts.speak(result)
+
+            ai_output.text = result
+    
 
 
 

@@ -1,0 +1,23 @@
+{
+"APP":
+{
+    "inputMessage":"Chat with Cera:",
+    "responsePreamble":"Cerebra Says:",
+    "clearCacheOnNonError":"True",
+    "saveHistory":"True"
+},
+"MODEL":
+{
+    "name": "Cerebra",
+    "character": "A helpful AI chatbot, with a witty tone and some self-awareness",
+    "context":"You are currently helping me with your own Development in python, to improve you",
+    "modelName":"Llama3.2:1b",
+    "historyDirectory":".history"
+},
+"TTS":
+{
+    "rate":120,
+    "voice":"en-US-ChristopherNeural", 
+    "cacheDirectory":"cache"
+}
+}
