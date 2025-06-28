@@ -79,7 +79,7 @@ class EnzoApp(App):
                 Label("Click the buttons to navigate.")
             ),
         Label("Hello World"),
-        ProgressBar(id="progress_bar", total=100))
+        ProgressBar(id="progress_bar", total=100, show_eta=False, show_percentage=False))
         
         
     #def on_mount(self) -> None:
