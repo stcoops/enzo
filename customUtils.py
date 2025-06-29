@@ -7,17 +7,17 @@ class cmdUtils:
         if os.name == "nt":
             self.osType = "windows"
             self.directorySeperator = "\\"
-            import playsound 
+            self.playsound =  __import__("playsound")
         elif os.name == "posix":
             self.osType = "linux"
             self.directorySeperator = "/"
 
     async def play(self, file):
         if self.osType == "windows":
-            playsound.playsound(file)
+              self.playsound.playsound(file, block=False)
             
         else:
-            asyncio.create_subprocess_exec(f"ffplay {file} -nodisp -autoexit &> /dev/null")
+            await asyncio.create_subprocess_exec(f"ffplay {file} -nodisp -autoexit &> /dev/null")
 
     def call(self, command:str):
         if self.osType  == "windows":
