@@ -5,6 +5,7 @@ from textual.containers import Grid, VerticalScroll, Container
 from textual.reactive import reactive
 from textual.binding import Binding
 import asyncio
+from textual import on
 
 
 
@@ -66,20 +67,19 @@ class EnzoApp(App):
     }
     """
 
-    def __init__(self, tts, llm, APPconfig, MODELconfig, TTSconfig) -> None:
+    def __init__(self, tts, llm, config) -> None:
         self.tts = tts
         self.llm = llm
-        self.APPconfig = APPconfig  
-        self.MODELconfig = MODELconfig
-        self.TTSconfig = TTSconfig 
+        self.config = config  
+        self.aiTotalMessage = ""
         super().__init__()
 
 
     def compose(self) -> ComposeResult:
         # Top-left: Menu container
         modelOptions = []
-        for i in range(len(self.MODELconfig["modelsAvailable"])):
-            modelOptions.append((self.MODELconfig["modelsAvailable"][i]["name"], self.MODELconfig["modelsAvailable"][i]["id"])) #NOTE: corresponds to ["id"] for loading btw
+        for i in range(len(self.config["modelsAvailable"])):
+            modelOptions.append((self.config["modelsAvailable"][i]["name"], self.config["modelsAvailable"][i]["id"])) #NOTE: corresponds to ["id"] for loading btw
 
         SelectModel = Select(
                 options=modelOptions,
@@ -88,8 +88,8 @@ class EnzoApp(App):
             )
         
         voiceOptions = []
-        for i in range(len(self.TTSconfig["voicesAvailable"])):
-            voiceOptions.append((self.TTSconfig["voicesAvailable"][i]["name"], self.TTSconfig["voicesAvailable"][i]["id"]))
+        for i in range(len(self.config["voicesAvailable"])):
+            voiceOptions.append((self.config["voicesAvailable"][i]["name"], self.config["voicesAvailable"][i]["id"]))
 
         SelectVoice = Select(
             options=voiceOptions,
@@ -114,7 +114,10 @@ class EnzoApp(App):
         userInput.border_title = "User Input"
         yield userInput
         yield Footer()
-        
+
+    @on(Select.Changed)
+    def select_changed(self, event: Select.Changed) -> None:
+        pass
     async def action_run_ai_task(self) -> None:
         """Action to run the AI task when the button is pressed."""
         #model_select = self.query_one("#model-select", Select)
@@ -129,19 +132,30 @@ class EnzoApp(App):
         
     async def run_ai_task(self) -> None:
         """Run the AI task and update the AI output area."""
-        await self.llm.query()
-        if True:
-            await self.tts.speak(self.llm.response)
 
-        self.ai_output.update(content = self.llm.response)
+        asyncio.create_task(self.llm.startQuery(self.ai_output))  # Pass the Static widget to update directly
+        
+        #await self.llm.queryComplete()
+        #self.ai_output.update(self.aiTotalMessage)
+        #if True:
+        asyncio.create_task(self.tts.speak(self.aiTotalMessage))
         self.user_input.text = ""  # Clear user input after processing
 
-    def action_SaveReloadConfig(self) -> None:
-        pass
+    
+
+    async def on_exit(self) -> None:
+        # Close the TTS aiohttp session
+        await self.tts.close()
+        #await super().on_exit()  # If App has an async on_exit
 
     def action_quit(self) -> None:
         """Action to quit the application."""
+        # For async cleanup, schedule the coroutine to close tts session
+        asyncio.create_task(self.tts.close())
         self.exit()
+        super().exit()
+        
+
 
 
 

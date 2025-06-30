@@ -4,9 +4,11 @@ from ollama import AsyncClient
 import asyncio, subprocess, requests
 class model:
     def __init__(self, config):
-        self.config = config
+        super().__init__()
+        self.config = config #type: ignore
         self.question = ""
-        
+        self.client = AsyncClient()
+
     def startOllama(self) -> None:
         try:
             if self.is_ollama_running():
@@ -57,33 +59,32 @@ class model:
         except:
             pass
 
-    def createModel(self) -> bool:
-        try:
-            AsyncClient().create(
+    def createModel(self):
+            self.client = AsyncClient.create(
                 model=self.config["name"],           # type: ignore
                 from_ = self.config["modelName"],    # type: ignore
                 system = f"""
                 You are {self.config["name"]}."""      # type: ignore
                 + f"""{self.config["context"]} """)    # type: ignore
+    
+    #async def close(self):
+        # Properly close any aiohttp session from AsyncClient
+        #await self.client.close()
+    
+    async def startQuery(self, output) -> None:
+            self.queryRunning = True
+            async for part in await self.client.chat(model = self.config["name"],messages = [*self.previousMessages,*self.currentMessages,{"role": "user", "content" : self.question}],stream = True,):
+                    self.lastMessage += part["message"]["content"]
+                    output.update(content = self.lastMessage)
 
-            return True
-        except:
-            return False
-    
-    
-    
-    async def query(self) -> str:
-            response = await AsyncClient().chat(
-                model = self.config["name"],     # type: ignore
-                messages = [
-                    *self.previousMessages,
-                    *self.currentMessages,
-                    {"role": "user", "content" : self.question}
-                    ]
-                )
             self.currentMessages += [
-                {"role": "user", "content" : self.question},
-                {"role": "assistant", "content" : response.message.content}
-            ]
-            self.response = response.message.content
-            return self.response
+                    {"role": "user", "content" : self.question},
+                    {"role": "assistant", "content" : self.lastMessage}
+                ]
+            self.queryRunning = False
+
+    async def queryComplete(self):
+        """Wait for the query to complete."""
+        while self.queryRunning:
+            await asyncio.sleep(0.1)
+

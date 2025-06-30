@@ -1,5 +1,15 @@
 import os, subprocess, json, asyncio
 
+def loadConfig(path: str):
+    with open("./" + path) as f:
+            config = json.load(f)
+    return config
+
+def updateConfig(path: str, newconfig) -> None:
+        with open("./config.json", "w") as f:
+            json.dump(newconfig, f, indent=4)
+
+
 # Note : Class for all OS-dependant operations, excluding those made simple by  the cmd.call() function
 class cmdUtils:
     def __init__(self):
@@ -51,6 +61,10 @@ class cmdUtils:
                 self.cd(dir)
             self.currentWorkingDirectory = ""
 
+    
+        
+        
+
 
 #if __name__ == "__main__":
 cmd = cmdUtils()
@@ -58,10 +72,6 @@ cmd = cmdUtils()
 
     
 
-def loadConfig(path: str, section: str):
-    with open("./" + path) as f:
-            config = json.load(f)[section]
-    return config
-    
+
 
 

@@ -58,6 +58,9 @@ class LoadingScreenApp(App):
     current_step = reactive("")
     timer: Timer | None = None
 
+    def __init__(self):
+        super().__init__()
+
     def compose(self) -> ComposeResult:
         yield Container(
             Static(self.get_logo(), id="logo"),
@@ -118,27 +121,25 @@ class LoadingScreenApp(App):
             await self.action_quit()
 
     async def action_quit(self) -> None:
+        super().exit()
         self.exit()
 
     # Example step functions you can replace with real logic
 
     def getConfig(self):
         from customUtils import loadConfig
-        self.APPconfig = loadConfig("config.json", "APP")
-        self.MODELconfig = loadConfig("config.json", "MODEL")
-        self.TTSconfig = loadConfig("config.json", "TTS")
+        self.config = loadConfig("config.json")
 
-    def startLLM(self):
+    async def startLLM(self):
         from ollamaUtils import model
-        import asyncio
-        self.llm = model(self.MODELconfig)
-        self.llm.startOllama()
+        self.llm = model(self.config)
+        #self.llm.startOllama()
         self.llm.createModel()
         self.llm.loadHistory()
 
     def loadTTS(self):
         from ttsWrapper import voice
-        self.tts = voice(self.TTSconfig)
+        self.tts = voice(self.config)
         self.tts.clearCache()
 
     def finalize_setup(self):
@@ -146,12 +147,10 @@ class LoadingScreenApp(App):
 
 
 class details:
-    def __init__(self, tts, llm, APPConfig, MODELconfig, TTSconfig):
+    def __init__(self, tts, llm, config):
         self.tts = tts
         self.llm = llm
-        self.APPConfig = APPConfig
-        self.MODELconfig = MODELconfig
-        self.TTSconfig = TTSconfig
+        self.config= config
 
 def loadscreen():
     """Main function to run the loading screen app."""
@@ -162,7 +161,11 @@ def loadscreen():
             
             L.exit()
             
-            return details(L.tts, L.llm, L.APPconfig, L.MODELconfig, L.TTSconfig)
+            return details(L.tts, L.llm, L.config)
+        else:
+            print("Loading screen did not complete successfully.")
+            L.exit()
+            exit(1)
     except KeyboardInterrupt:
         print("\n[Interrupted] Exiting cleanly...")
         L.exit()
