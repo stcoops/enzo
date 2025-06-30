@@ -133,7 +133,7 @@ class EnzoApp(App):
     async def run_ai_task(self) -> None:
         """Run the AI task and update the AI output area."""
 
-        asyncio.create_task(self.llm.startQuery(self.ai_output))  # Pass the Static widget to update directly
+        await self.llm.startQuery(self.ai_output)  # Pass the Static widget to update directly
         
         #await self.llm.queryComplete()
         #self.ai_output.update(self.aiTotalMessage)

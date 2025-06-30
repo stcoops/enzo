@@ -130,10 +130,10 @@ class LoadingScreenApp(App):
         from customUtils import loadConfig
         self.config = loadConfig("config.json")
 
-    async def startLLM(self):
+    def startLLM(self):
         from ollamaUtils import model
         self.llm = model(self.config)
-        #self.llm.startOllama()
+        self.llm.startOllama()
         self.llm.createModel()
         self.llm.loadHistory()
 
