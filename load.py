@@ -8,51 +8,7 @@ from textual.events import Key
 
 
 class LoadingScreenApp(App):
-    CSS = """
-    Screen {
-        background: rgb(30,30,30);
-        align: center middle;
-    }
-
-    #logo {
-        color: rgb(210,210,210);
-        text-align: center;
-        margin: 1;
-    }
-
-    #status {
-        color: white;
-        text-align: center;
-        padding: 0 0;
-    }
-
-    ProgressBar {
-        align: center middle;
-        padding: 0 0;
-        width: 60;
-        margin: 1;
-    }
-    
-    Bar > .bar--indeterminate {
-        color: rgb(120,120,120);
-        background: rgb(60,60,60);
-    }
-
-    Bar > .bar--bar {
-        color: rgb(180,180,180);
-        background: rgb(90,90,90);
-    }
-
-    Bar > .bar--complete {
-        color: rgb(210,210,210);
-    }
-
-    #content {
-        align: center middle;
-        height: auto;
-        margin: 1;
-    }
-    """
+    CSS_PATH = "styles.css"
 
     progress = reactive(0)
     current_step = reactive("")
@@ -68,7 +24,6 @@ class LoadingScreenApp(App):
             Static("", id="status"),
             id="content"
         )
-
     def on_mount(self) -> None:
         # Now self is available — safe to assign functions
         self.loading_steps = [
@@ -104,7 +59,7 @@ class LoadingScreenApp(App):
                 self.step_instruction()
         else:
             self.status_widget.update("All systems ready! Launching application...")
-            self.set_timer(2.0, self.action_quit)
+            self.set_timer(0.1, self.action_quit)
 
     def update_progress(self):
         if self.step_index >= len(self.loading_steps):

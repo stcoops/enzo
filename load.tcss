@@ -1,0 +1,43 @@
+    Screen {
+        background: rgb(30,30,30);
+        align: center middle;
+    }
+
+    #logo {
+        color: rgb(210,210,210);
+        text-align: center;
+        margin: 1;
+    }
+
+    #status {
+        color: white;
+        text-align: center;
+        padding: 0 0;
+    }
+
+    ProgressBar {
+        align: center middle;
+        padding: 0 0;
+        width: 60;
+        margin: 1;
+    }
+    
+    Bar > .bar--indeterminate {
+        color: rgb(120,120,120);
+        background: rgb(60,60,60);
+    }
+
+    Bar > .bar--bar {
+        color: rgb(180,180,180);
+        background: rgb(90,90,90);
+    }
+
+    Bar > .bar--complete {
+        color: rgb(210,210,210);
+    }
+
+    #content {
+        align: center middle;
+        height: auto;
+        margin: 1;
+    }

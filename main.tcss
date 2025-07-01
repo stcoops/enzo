@@ -1,0 +1,49 @@
+Screen {
+        layout: grid;
+        grid-size: 2 2;
+        grid-columns: 3fr 7fr;
+        grid-rows: 1fr 3fr;
+        background: rgb(30, 30, 30);
+    }
+
+    #menu-title {
+        color: rgb(210, 210, 210);  
+        align: center middle;
+    }
+
+    #menu {
+        border: round rgb(120, 120, 120);
+        border-title-align: center;
+        margin: 1 0 0 2;
+        align: center middle;
+    }
+
+    #ai-output {
+        border: round rgb(120, 120, 120);
+        border-title-align: center;
+        margin: 1 2 1 0; /* Margin: top, right, bottom, left */
+        row-span: 2;  /* Spans both rows */
+        height: 100%;
+    }
+
+
+    #user-input {
+        border: round rgb(120, 120, 120);
+        border-title-align: center;
+        margin: 0 0 1 2;
+        
+    }
+
+    Select {
+        margin: 0;
+        color: rgb(210, 210, 210);
+        background: rgb(30, 30, 30);
+        keyline: double rgb(120, 120, 120);
+        
+
+    }
+
+    TextArea {
+        background: rgb(30, 30, 30);
+        color: rgb(210, 210, 210);
+    }
