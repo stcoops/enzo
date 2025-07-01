@@ -15,7 +15,7 @@ class model:
                 print("Ollama server already running.")
                 return
             print("Attempting to start Ollama server...")
-            subprocess.Popen(["ollama", "serve"])
+            subprocess.Popen("ollama serve")
             # Wait for Ollama server to become available
             for i in range(20):
                 if self.is_ollama_running():

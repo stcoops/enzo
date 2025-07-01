@@ -16,10 +16,12 @@ class LoadingScreen(Screen):
     current_step = reactive("")
 
     def compose(self) -> ComposeResult:
-        yield Container(
-            Static(self.get_logo(), id="logo"))
-        yield ProgressBar(show_eta=False, show_percentage=False)
-        yield Static("", id="status")
+        self.logo_static = (Static(self.get_logo(), id="logo"))
+        self.progress_bar = (ProgressBar(show_eta=False, show_percentage=False))
+        self.status_widget = (Static("", id="status"))
+        self.center_container = Container(self.logo_static, Center(self.progress_bar), self.status_widget, id="content")
+    
+        yield self.center_container
 
 
     def on_mount(self) -> None:
@@ -34,6 +36,8 @@ class LoadingScreen(Screen):
         self.step_index = 0
         self.elapsed = 0
         self.total_duration = sum(t for _, t, _ in self.loading_steps)
+        #self.center_container = self.query_one(Center)
+        #self.center_container.compose_add_child(ProgressBar(show_eta=False, show_percentage=False))
         self.progress_bar = self.query_one(ProgressBar)
         self.progress_bar.total = self.total_duration
         self.status_widget = self.query_one("#status", Static)
@@ -161,21 +165,22 @@ class Dashboard(Screen):
     async def run_ai_task(self) -> None:
         """Run the AI task and update the AI output area."""
         self.user_input.text = "Processing your query..."
-        await self.llm.startQuery(self.ai_output, self.tts, cmd,)  # Pass the Static widget to update directly
+        await self.llm.startQuery(self.ai_output, self.tts, cmd, TTS_ENABLED = False)  # Pass the Static widget to update directly
         
         self.user_input.text = "Query sent to AI. Waiting for response..."
         #await self.llm.queryComplete()
         #self.ai_output.update(self.aiTotalMessage)
         #if True:
-        asyncio.create_task(self.tts.speak(self.aiTotalMessage))
+        asyncio.create_task(self.tts.speak(self.llm.aiTotalMessage))
         asyncio.create_task(cmd.play(self.tts.fileName))
 
         self.user_input.text = ""  # Clear user input after processing
 
+    async def action_quit(self) -> None:
+        pass
+
 
 class mainApp(App):
-    """Main application class for the loading screen."""
-    CSS_PATH = "main.tcss"
 
     def on_mount(self) -> None:
         self.install_screen(LoadingScreen(), name="loading")
