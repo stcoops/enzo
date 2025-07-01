@@ -1,12 +1,12 @@
 {
-    "inputMessage":"Chat with Cera:",
-    "responsePreamble":"Cerebra Says:",
+    "inputMessage":"Chat with Enzo:",
+    "responsePreamble":"Enzo says:",
     "clearCacheOnNonError":"True",
     "saveHistory":"True",
-    "name": "Cerebra",
+    "name": "Enzo",
     "character": "A helpful AI chatbot, with a witty tone and some self-awareness",
     "context":"You are currently helping me with your own Development in python, to improve you",
-    "modelName":"Llama3.2:1b",
+    "modelName":"deepseek-r1:1.5b",
     "modelsAvailable": [
         {   
             "name": "Llama v3.2 1b",
