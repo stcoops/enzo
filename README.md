@@ -1,33 +1,42 @@
 
-# 🐍 Enzo
+#  Enzo
 
 **Enzo** is a locally hosted AI application built with [Textual](https://textual.textualize.io/) in Python. Designed for speed, simplicity, and full local control, Enzo offers a sleek terminal UI for AI interactions without relying on remote servers or cloud services.
 
-> ⚠️ **Work in Progress**  
+>  **Work in Progress**  
 > Enzo is currently under active development and not ready for public release.
 
 ---
 
-## ✨ Features (Planned & In Progress)
+## Features (Planned & In Progress)
 
-- 📺 Textual-based modern TUI (Text User Interface)
-- 🤖 Local AI inference (no external API calls)
-- 📝 Prompt management and history
-- 📂 Local data storage
-- 🌙 Dark mode and theme support
-- 🔌 Plugin-friendly architecture *(planned)*
+-  Textual-based modern TUI (Text User Interface)
+-  Local AI inference (no external API calls)
+-  Prompt management and history
+-  Local data storage
+
 
 ---
 
-## 📖 Roadmap
-
+## Current To-Do list:
 - [ ] Core AI integration
+- [ ] Let Ollama Streaming = True
 - [ ] Prompt history & management
-- [ ] Configurable themes
-- [ ] Plugin system for tools and extensions
+- [ ] Menu functionality
+- [ ] Update website
+- [ ] Fix unclosed Client session
+- [ ] Make Load + App screens so no pause after load
 - [ ] Enhanced error handling & logging
+- [ ] Rename files & simple cleanup.
+- [ ] Configurable themes
 - [ ] Installer packaging (Windows, macOS, Linux)
 
+## Current Bugs:
+- [ ] 
+- [ ]
+- [ ]
+- [ ]
+- [ ]
 ---
 
 ## 🤝 Contributing

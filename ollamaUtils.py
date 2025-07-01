@@ -71,13 +71,29 @@ class model:
         # Properly close any aiohttp session from AsyncClient
         #await self.client.close()
     
-    async def startQuery(self, output) -> None:
+    async def startQuery(self, output, tts, cmd,  TTS_ENABLED = True,) -> None:
+            self.fullMessage = ""
+            self.lastPart = ""
+            self.tts = tts
+            self.bigChunk = ""
+            
             async for part in await self.client.chat(model = self.config["name"],messages = [*self.previousMessages,*self.currentMessages,{"role": "user", "content" : self.question}],stream = True,):
-                    self.lastMessage += part["message"]["content"]
+                    self.fullMessage += part["message"]["content"]
                     self.lastPart = part["message"]["content"]
-                    output.update(content = self.lastMessage)
+                    
+                    output.update(content = self.fullMessage)
+                    if TTS_ENABLED:
+                        self.bigChunk += self.lastPart
+                        if len(self.bigChunk) > 10:  # Adjust chunk size as needed
+                            id = str(int(time.time()))
+                            fileName = self.config["cacheDirectory"] + "/" + id + ".mp3"  # type: ignore
+                            with open(fileName, "w") as f:
+                                f.write(self.bigChunk)
+                                tts.addToQueue(fileName)
+                            
+                            
 
             self.currentMessages += [
                     {"role": "user", "content" : self.question},
-                    {"role": "assistant", "content" : self.lastMessage}
+                    {"role": "assistant", "content" : self.fullMessage}
                 ]

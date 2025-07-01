@@ -6,7 +6,7 @@ from textual.reactive import reactive
 from textual.binding import Binding
 import asyncio
 from textual import on
-
+from customUtils import cmd
 
 
 class EnzoApp(App):
@@ -132,13 +132,16 @@ class EnzoApp(App):
         
     async def run_ai_task(self) -> None:
         """Run the AI task and update the AI output area."""
-
-        await self.llm.startQuery(self.ai_output)  # Pass the Static widget to update directly
+        self.user_input.text = "Processing your query..."
+        await self.llm.startQuery(self.ai_output, self.tts, cmd,)  # Pass the Static widget to update directly
         
+        self.user_input.text = "Query sent to AI. Waiting for response..."
         #await self.llm.queryComplete()
         #self.ai_output.update(self.aiTotalMessage)
         #if True:
         asyncio.create_task(self.tts.speak(self.aiTotalMessage))
+        asyncio.create_task(cmd.play(self.tts.fileName))
+
         self.user_input.text = ""  # Clear user input after processing
 
     

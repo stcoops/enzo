@@ -24,7 +24,7 @@ class cmdUtils:
 
     async def play(self, file):
         if self.osType == "windows":
-              self.playsound.playsound(file, block=False)
+            self.playsound.playsound(file, block=True)
             
         else:
             await asyncio.create_subprocess_exec(f"ffplay {file} -nodisp -autoexit &> /dev/null")

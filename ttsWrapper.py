@@ -1,17 +1,36 @@
 import json, asyncio
 from customUtils import cmd
 import edge_tts, aiohttp
+import pyaudio
 
 class voice:
     def __init__(self, config):
         super().__init__()
         self.config = config #type: ignore
         self.session = aiohttp.ClientSession()
+        self.Queue = []  # Initialize an empty queue
         
+
+    async def addToQueue(self, fileName: str):
+        """Add a file to the queue."""
+        self.Queue.append(fileName)
+    
+    async def startprocessQueue(self):
+        self.runQueue = True  # Flag to indicate the queue is running
+        """Process the queue by playing each file in order."""
+        while self.runQueue: 
+            if not self.Queue:  # If the queue is empty, wait for a while before checking again
+                await asyncio.sleep(1)
+                continue
+
+            fileName = self.Queue.pop()
+            
+
+
     async def speak(self, data: str):
         voice = self.config["voice"]
         audioFile = self.config["cacheDirectory"] + "/TTS.mp3"
-
+        self.fileName = audioFile
         textFile = self.config["cacheDirectory"] + "/TTS.txt"
         with open(textFile, "w") as f:
             f.write(data)
@@ -23,8 +42,13 @@ class voice:
             ratePrefix = "-"
 
         #self.clearCache()
-        await edge_tts.Communicate(data, voice, rate = f"{ratePrefix}{str(rate)}%").save(audioFile)
-        await cmd.play(audioFile)
+        # Ensure the audio file is empty before writing
+        async for chunk in edge_tts.Communicate(data, voice, rate = f"{ratePrefix}{str(rate)}%").stream():
+            if chunk["type"] == "audio" and "data" in chunk:
+                with open(audioFile, "ab") as self.file:
+                    self.file.write(chunk["data"])
+
+        return audioFile
         
     async def close(self):
         # Properly close the aiohttp session
@@ -35,4 +59,33 @@ class voice:
     def clearCache(self):
         cmd.rmRecursive(self.config["cacheDirectory"])
         cmd.mkdir(self.config["cacheDirectory"])
+
+    async def play(self, data: str):
+        """Play the audio data using edge_tts and pyaudio."""
+        voice = self.config["voice"]
+        rate = self.config["rate"] - 100
+        if rate >= 0:
+            ratePrefix = "+"
+        else:
+            ratePrefix = "-"
+        
+        # Configuration
+        AUDIO_FORMAT = pyaudio.paInt16
+        CHANNELS = 1
+        RATE = 24000  # coqui (24000), azure (16000), openai (22050), system (22050), msedge (24000)
+
+        # Initialize PyAudio
+        pyaudio_instance = pyaudio.PyAudio()
+        stream = pyaudio_instance.open(format=AUDIO_FORMAT, channels=CHANNELS, rate=RATE, output=True)
+
+        # Function to play audio stream
+        try:
+            communicate = edge_tts.Communicate(data, voice, rate = f"{ratePrefix}{str(rate)}%")
+            async for chunk in communicate.stream():
+                if chunk["type"] == "audio":
+                    file.write(chunk["data"])        
+        finally:
+            stream.stop_stream()
+            stream.close()
+            pyaudio_instance.terminate()
 
