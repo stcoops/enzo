@@ -19,9 +19,9 @@
 ---
 
 ## Current To-Do list:
-- [ ] Core AI integration
-- [ ] Let Ollama Streaming = True
-- [ ] Prompt history & management
+- [x] Core AI integration
+- [x] Let Ollama Streaming = True
+- [x] Prompt history & management
 - [ ] Menu functionality
 - [ ] Update website
 - [ ] Fix unclosed Client session
@@ -31,12 +31,12 @@
 - [ ] Configurable themes
 - [ ] Installer packaging (Windows, macOS, Linux)
 
-## Current Bugs:
-- [ ] 
-- [ ]
-- [ ]
-- [ ]
-- [ ]
+## Current Flaws:
+- [ ] Unclosed Client Session bug
+- [ ] TTS bigChunk broken
+- [ ] Ollama streaming can intersect itself. flag needed
+- [ ] Playsound an absolute mess
+- [ ] Messy Codebase
 ---
 
 ## 🤝 Contributing
