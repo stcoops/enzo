@@ -34,7 +34,7 @@
 ## Current Flaws:
 - [ ] Unclosed Client Session bug
 - [ ] TTS bigChunk broken
-- [ ] Ollama streaming can intersect itself. flag needed
+- [x] Ollama streaming can intersect itself. flag needed
 - [ ] Playsound an absolute mess
 - [ ] Messy Codebase
 ---
