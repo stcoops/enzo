@@ -2,6 +2,7 @@ import json, os, time
 import customUtils as utils
 from ollama import AsyncClient
 import asyncio, subprocess, requests
+from openai.helpers import LocalAudioPlayer
 class model:
     def __init__(self, config):
         super().__init__()
@@ -21,6 +22,7 @@ class model:
             for i in range(20):
                 if self.is_ollama_running():
                     print("Ollama server is running.")
+                    subprocess.Popen("ollama run " + self.config["name"])
                     return
                 print(f"Waiting for Ollama...{i+1}/20")
                 time.sleep(1)
@@ -60,41 +62,32 @@ class model:
         except:
             pass
 
+    def closeConnection(self):
+        pass
     def createModel(self):
             self.client.create(
                 model=self.config["name"],           # type: ignore
                 from_ = self.config["modelName"],    # type: ignore
                 system = f"""
-                You are {self.config["name"]}."""      # type: ignore
+                Your Name is: {self.config["name"]}.\n"""      # type: ignore
                 + f"""{self.config["context"]} """)    # type: ignore
     
     #async def close(self):
         # Properly close any aiohttp session from AsyncClient
         #await self.client.close()
     
-    async def startQuery(self, output) -> None:
+    async def startQuery(self, output, tts = None) -> None:
             if self.query == False:
                 self.query = True
                 self.fullMessage = ""
                 self.lastPart = ""
-                TTS_ENABLED = False
-                self.bigChunk = ""
                 
-                async for part in await self.client.chat(model = self.config["modelName"],messages = [*self.previousMessages,*self.currentMessages,{"role": "user", "content" : self.question}],stream = True):
+                async for part in await self.client.chat(model = self.config["name"],messages = [*self.previousMessages,*self.currentMessages,{"role": "user", "content" : self.question}],stream = True):
                         self.fullMessage += part["message"]["content"]
                         self.lastPart = part["message"]["content"]
                         
                         output.update(content = self.fullMessage)
-                        
-                        
-                        if TTS_ENABLED:
-                            self.bigChunk += self.lastPart
-                            if len(self.bigChunk) > 10:  # Adjust chunk size as needed
-                                id = str(int(time.time()))
-                                fileName = self.config["cacheDirectory"] + "/" + id + ".mp3"  # type: ignore
-                                with open(fileName, "w") as f:
-                                    f.write(self.bigChunk)
-                                    #tts.addToQueue(fileName)
+
                                 
                                 
 

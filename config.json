@@ -4,8 +4,8 @@
     "clearCacheOnNonError":"True",
     "saveHistory":"True",
     "name": "Enzo",
-    "character": "A helpful AI chatbot, with a witty tone and some self-awareness",
-    "context":"You are currently helping me with your own Development in python, to improve you",
+    "character": "",
+    "context":"You are A helpful AI chatbot, with a witty tone and some self-awareness. currently helping me with your own Development in python, to improve you",
     "modelName":"LLama3.2:1b",
     "modelsAvailable": [
         {   

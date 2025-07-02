@@ -28,6 +28,8 @@ class voice:
 
 
     async def speak(self, data: str):
+        if self.speaking:
+            self.txtfile.write
         voice = self.config["voice"]
         audioFile = self.config["cacheDirectory"] + "/TTS.mp3"
         self.fileName = audioFile
@@ -61,7 +63,6 @@ class voice:
         cmd.mkdir(self.config["cacheDirectory"])
 
     async def play(self, data: str):
-        """Play the audio data using edge_tts and pyaudio."""
         voice = self.config["voice"]
         rate = self.config["rate"] - 100
         if rate >= 0:
@@ -69,23 +70,10 @@ class voice:
         else:
             ratePrefix = "-"
         
-        # Configuration
-        AUDIO_FORMAT = pyaudio.paInt16
-        CHANNELS = 1
-        RATE = 24000  # coqui (24000), azure (16000), openai (22050), system (22050), msedge (24000)
+    
 
-        # Initialize PyAudio
-        pyaudio_instance = pyaudio.PyAudio()
-        stream = pyaudio_instance.open(format=AUDIO_FORMAT, channels=CHANNELS, rate=RATE, output=True)
-
-        # Function to play audio stream
-        try:
-            communicate = edge_tts.Communicate(data, voice, rate = f"{ratePrefix}{str(rate)}%")
-            async for chunk in communicate.stream():
-                if chunk["type"] == "audio":
-                    file.write(chunk["data"])        
-        finally:
-            stream.stop_stream()
-            stream.close()
-            pyaudio_instance.terminate()
+        communicate = edge_tts.Communicate(data, voice, rate = f"{ratePrefix}{str(rate)}%")
+        async for chunk in communicate.stream():
+            if chunk["type"] == "audio":
+                file.write(chunk["data"])        
 

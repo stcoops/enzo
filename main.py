@@ -91,7 +91,6 @@ class LoadingScreen(Screen):
         self.tts.clearCache()
 
     def finalize_setup(self):
-        self.loaded = True
         self.app.install_screen(Dashboard(self.config,self.tts,self.llm), "Dashboard")
         self.dismiss(1)
 
@@ -107,7 +106,11 @@ class Dashboard(Screen):
     def __init__(self, config, tts, llm):
         super().__init__()
         self.config = config
-        self.tts = tts
+        if tts:
+            self.tts = tts
+        else: 
+            self.ttsEnabled = False
+            self.tts = None
         self.llm = llm
 
     def compose(self) -> ComposeResult:
@@ -176,17 +179,23 @@ class Dashboard(Screen):
 
         self.user_input.text = ""  # Clear user input after processing
 
+    async def on_exit(self) -> None:
+        await self.llm.saveHistory()
+        self.llm.closeConnection
+
 
 class mainApp(App):
 
     BINDINGS = [Binding("ctrl+q", "quit", "Quit Enzo")]
 
     def on_mount(self) -> None:
+        self.loaded = False
         self.install_screen(LoadingScreen(), name="loading")
     
     @work
     async def on_ready(self) -> None:
         if await self.push_screen_wait(LoadingScreen()) == 1:
+            self.loaded = True
             self.push_screen("Dashboard")
 
 
@@ -194,7 +203,10 @@ class mainApp(App):
         if event.key == "q":
             await self.action_quit()
 
-    async def action_quit(self) -> None:
+    async def action_quit(self) -> None:           
+
+
+
         self.exit()
         super().exit()
         
