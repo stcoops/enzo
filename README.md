@@ -25,7 +25,7 @@
 - [ ] Menu functionality
 - [ ] Update website
 - [ ] Fix unclosed Client session
-- [ ] Make Load + App screens so no pause after load
+- [x] Make Load + App screens so no pause after load
 - [ ] Enhanced error handling & logging
 - [ ] Rename files & simple cleanup.
 - [ ] Configurable themes
