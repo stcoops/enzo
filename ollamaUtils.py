@@ -56,11 +56,8 @@ class model:
             return False
         
     def saveHistory(self):
-        try:
-            with open(self.config["historyDirectory"] + "/" + self.sessionTimestamp + ".json", "w") as f: # type: ignore
-                json.dump(self.currentMessages, f)
-        except:
-            pass
+        with open(self.config["historyDirectory"] + "/" + self.sessionTimestamp + ".json", "w") as f: # type: ignore
+            json.dump(self.currentMessages, f)
 
     def closeConnection(self):
         pass

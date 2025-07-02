@@ -181,7 +181,7 @@ class Dashboard(Screen):
 
     async def on_exit(self) -> None:
         await self.llm.saveHistory()
-        self.llm.closeConnection
+        self.llm.closeConnection()
 
 
 class mainApp(App):
