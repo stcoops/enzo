@@ -100,8 +100,8 @@ class LoadingScreen(Screen):
 class Dashboard(Screen):
     CSS_PATH = "main.tcss"
     BINDINGS= [
-        Binding("ctrl+q", "quit", "Quit Enzo"),
         Binding("ctrl+r", "run_ai_task", "Run AI Task"),
+        
     ]
 
     def __init__(self, config, tts, llm):
@@ -165,22 +165,21 @@ class Dashboard(Screen):
     async def run_ai_task(self) -> None:
         """Run the AI task and update the AI output area."""
         self.user_input.text = "Processing your query..."
-        await self.llm.startQuery(self.ai_output, self.tts, cmd, TTS_ENABLED = False)  # Pass the Static widget to update directly
+        asyncio.create_task(self.llm.startQuery(self.ai_output))  # Pass the Static widget to update directly
         
         self.user_input.text = "Query sent to AI. Waiting for response..."
         #await self.llm.queryComplete()
         #self.ai_output.update(self.aiTotalMessage)
         #if True:
-        asyncio.create_task(self.tts.speak(self.llm.aiTotalMessage))
-        asyncio.create_task(cmd.play(self.tts.fileName))
+        #asyncio.create_task(self.tts.speak(self.llm.aiTotalMessage))
+        #asyncio.create_task(cmd.play(self.tts.fileName))
 
         self.user_input.text = ""  # Clear user input after processing
 
-    async def action_quit(self) -> None:
-        pass
-
 
 class mainApp(App):
+
+    BINDINGS = [Binding("ctrl+q", "quit", "Quit Enzo")]
 
     def on_mount(self) -> None:
         self.install_screen(LoadingScreen(), name="loading")

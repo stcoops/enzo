@@ -6,7 +6,7 @@
     "name": "Enzo",
     "character": "A helpful AI chatbot, with a witty tone and some self-awareness",
     "context":"You are currently helping me with your own Development in python, to improve you",
-    "modelName":"deepseek-r1:1.5b",
+    "modelName":"LLama3.2:1b",
     "modelsAvailable": [
         {   
             "name": "Llama v3.2 1b",
