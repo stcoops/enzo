@@ -6,8 +6,9 @@ from textual.reactive import reactive
 from textual.screen import Screen
 from textual.events import Key
 from textual import on, work
-import asyncio
-from customUtils import cmd
+import asyncio, json
+
+
 
 class LoadingScreen(Screen):
     CSS_PATH = "load.tcss"
@@ -16,6 +17,7 @@ class LoadingScreen(Screen):
     current_step = reactive("")
 
     def compose(self) -> ComposeResult:
+        """Interesting workarounds for a broken progress bar on screens?"""
         self.logo_static = (Static(self.get_logo(), id="logo"))
         self.progress_bar = (ProgressBar(show_eta=False, show_percentage=False))
         self.status_widget = (Static("", id="status"))
@@ -27,23 +29,22 @@ class LoadingScreen(Screen):
     def on_mount(self) -> None:
         # Now self is available — safe to assign functions
         self.loading_steps = [
-            ("Loading Configuration Files", 10, self.getConfig),
+            ("Starting Setup", 10, None),
+            ("Loading Configuration Files", 15, self.getConfig),
             ("Establishing Model Connection", 10, self.startLLM),
-            ("Starting Text-to-Speech Service", 10, self.loadTTS),
+            ("Starting Text-to-Speech Service", 5, self.loadTTS),
             ("Finalizing Setup", 5, self.finalize_setup)
         ]
 
         self.step_index = 0
         self.elapsed = 0
         self.total_duration = sum(t for _, t, _ in self.loading_steps)
-        #self.center_container = self.query_one(Center)
-        #self.center_container.compose_add_child(ProgressBar(show_eta=False, show_percentage=False))
         self.progress_bar = self.query_one(ProgressBar)
         self.progress_bar.total = self.total_duration
         self.status_widget = self.query_one("#status", Static)
 
         self.set_step()
-        self.timer = self.app.set_interval(1.0, self.update_progress)
+        self.timer = self.app.set_interval(0.5, self.update_progress)
 
     def get_logo(self) -> str:
         return r"""
@@ -75,8 +76,8 @@ class LoadingScreen(Screen):
 
         # Functions to be called during loading steps
     def getConfig(self):
-        from customUtils import loadConfig
-        self.config = loadConfig("config.json")
+        with open("config.json") as f:
+            self.config = json.load(f)
 
     def startLLM(self):
         from ollamaUtils import model
@@ -171,12 +172,6 @@ class Dashboard(Screen):
         asyncio.create_task(self.llm.startQuery(self.ai_output))  # Pass the Static widget to update directly
         
         self.user_input.text = "Query sent to AI. Waiting for response..."
-        #await self.llm.queryComplete()
-        #self.ai_output.update(self.aiTotalMessage)
-        #if True:
-        #asyncio.create_task(self.tts.speak(self.llm.aiTotalMessage))
-        #asyncio.create_task(cmd.play(self.tts.fileName))
-
         self.user_input.text = ""  # Clear user input after processing
 
     async def on_exit(self) -> None:

@@ -1,5 +1,4 @@
 import json, os, time
-import customUtils as utils
 from ollama import AsyncClient
 import asyncio, subprocess, requests
 from openai.helpers import LocalAudioPlayer
@@ -43,7 +42,7 @@ class model:
     def loadHistory(self) -> bool:      # Also initializes previousMessages + currentMessages (empty)
         try:
             self.previousMessages = []
-            directory = [name for name in os.listdir(self.config["historyDirectory"])]    # type: ignore
+            directory = [fileName for fileName in os.listdir(self.config["historyDirectory"])]    # type: ignore
             for i in range(len(directory)):
                 with open(self.config["historyDirectory"] + "/" + directory[i]) as f:     # type: ignore
                     self.previousMessages += json.load(f)
@@ -63,8 +62,8 @@ class model:
         pass
     def createModel(self):
             self.client.create(
-                model=self.config["name"],           # type: ignore
-                from_ = self.config["modelName"],    # type: ignore
+                model = self.config["modelsAvailable"][self.config["modelIndex"]]["id"],           # type: ignore
+                from_ = self.config["modelsAvailable"][self.config["modelIndex"]]["id"],    # type: ignore
                 system = f"""
                 Your Name is: {self.config["name"]}.\n"""      # type: ignore
                 + f"""{self.config["context"]} """)    # type: ignore
@@ -79,7 +78,7 @@ class model:
                 self.fullMessage = ""
                 self.lastPart = ""
                 
-                async for part in await self.client.chat(model = self.config["name"],messages = [*self.previousMessages,*self.currentMessages,{"role": "user", "content" : self.question}],stream = True):
+                async for part in await self.client.chat(model = self.config["modelsAvailable"][self.config["modelIndex"]]["id"], messages = [*self.previousMessages,*self.currentMessages,{"role": "user", "content" : self.question}],stream = True):
                         self.fullMessage += part["message"]["content"]
                         self.lastPart = part["message"]["content"]
                         
@@ -93,3 +92,5 @@ class model:
                         {"role": "assistant", "content" : self.fullMessage}
                     ]
                 self.query = False
+            else:
+                pass

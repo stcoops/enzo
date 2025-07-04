@@ -3,10 +3,10 @@
     "responsePreamble":"Enzo says:",
     "clearCacheOnNonError":"True",
     "saveHistory":"True",
-    "name": "Enzo",
+    "name": "Llama3.2:1b",
     "character": "",
     "context":"You are A helpful AI chatbot, with a witty tone and some self-awareness. currently helping me with your own Development in python, to improve you",
-    "modelName":"LLama3.2:1b",
+    "modelIndex": 0,
     "modelsAvailable": [
         {   
             "name": "Llama v3.2 1b",
@@ -14,7 +14,9 @@
         },
         {   "name" : "Deepseek R1 1.5b",
             "id" : "Deepseek-r1:1.5b"
-        }
+        },
+        {   "name": "Gemma3n (e) 2b",
+            "id": "gemma3n:e2b"}
     ],
     "historyDirectory":".history",
     "rate":120,

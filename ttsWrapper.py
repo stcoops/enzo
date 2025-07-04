@@ -1,7 +1,6 @@
 import json, asyncio
-from customUtils import cmd
 import edge_tts, aiohttp
-import pyaudio
+import shutil, os
 
 class voice:
     def __init__(self, config):
@@ -59,8 +58,8 @@ class voice:
             await self.session.close()
 
     def clearCache(self):
-        cmd.rmRecursive(self.config["cacheDirectory"])
-        cmd.mkdir(self.config["cacheDirectory"])
+        shutil.rmtree(self.config["cacheDirectory"])
+        os.mkdir(self.config["cacheDirectory"])
 
     async def play(self, data: str):
         voice = self.config["voice"]
