@@ -19,6 +19,7 @@
             "id": "gemma3n:e2b"}
     ],
     "historyDirectory":".history",
+    "ttsEnabled": false,
     "rate":120,
     "voice":"en-US-ChristopherNeural", 
     "cacheDirectory":"cache",

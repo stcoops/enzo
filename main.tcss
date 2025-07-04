@@ -6,15 +6,11 @@ Screen {
         background: rgb(30, 30, 30);
     }
 
-    #menu-title {
-        color: rgb(210, 210, 210);  
+    #ai-status {
         align: center middle;
     }
 
-    #menu {
-        border: round rgb(120, 120, 120);
-        border-title-align: center;
-        margin: 1 0 0 2;
+    #logo {
         align: center middle;
     }
 
@@ -27,20 +23,11 @@ Screen {
     }
 
 
-    #user-input {
+    #statusAndInput {
         border: round rgb(120, 120, 120);
         border-title-align: center;
         margin: 0 0 1 2;
         
-    }
-
-    Select {
-        margin: 0;
-        color: rgb(210, 210, 210);
-        background: rgb(30, 30, 30);
-        keyline: double rgb(120, 120, 120);
-        
-
     }
 
     TextArea {

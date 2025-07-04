@@ -3,6 +3,7 @@ from ollama import AsyncClient
 import asyncio, subprocess, requests, edge_tts, wave, sys, pyaudio, time
 from openai.helpers import LocalAudioPlayer
 import pygame
+from textual import work
 
 class model:
     def __init__(self, config):
@@ -74,13 +75,11 @@ class model:
         # Properly close any aiohttp session from AsyncClient
         #await self.client.close()
     
-    async def startQuery(self, input, output, tts = None) -> None:
+    async def startQuery(self, status, output, tts = None) -> None:
             if self.query == False:
                 self.query = True
                 self.fullMessage = ""
                 self.lastPart = ""
-                id = time.strftime("%d%b%Y-%H%M%S")
-                audioFile = f"{self.config['cacheDirectory']}/{id}.mp3"
                 async for part in await self.client.chat(model = self.config["modelsAvailable"][self.config["modelIndex"]]["id"], messages = [*self.previousMessages,*self.currentMessages,{"role": "user", "content" : self.question}],stream = True):
                         self.fullMessage += part["message"]["content"]
                         self.lastPart = part["message"]["content"]
@@ -96,12 +95,15 @@ class model:
                         {"role": "user", "content" : self.question},
                         {"role": "assistant", "content" : self.fullMessage}
                     ]
-                await self.makeNoise(input)
                 
-                #async for chunk in edge_tts.Communicate(data, voice, rate = f"{ratePrefix}{str(rate)}%").stream():
-                #    if chunk["type"] == "audio" and "data" in chunk:
-                #        with open(audioFile, "ab") as self.file:
-                #            self.file.write(chunk["data"])
+                if self.config["ttsEnabled"]:
+                    await self.makeNoise(input)
+                    status.update(content = "Enzo is talking..")
+
+                status.update(content = "Chat with Enzo:")
+                self.query = False
+                return
+
 
             else:
                 pass
@@ -126,13 +128,26 @@ class model:
         voice = self.config["voice"]
         rate = ratePrefix + str(rate) + "%"
 
-        playback = subprocess.Popen(f"edge-playback --file {self.config['cacheDirectory']}/temp.txt --voice {voice} --rate {rate}"
-                                    , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (out, err) = playback.communicate()
-        playback.terminate()
+        with subprocess.Popen(f"edge-playback --file {self.config['cacheDirectory']}/temp.txt --voice {voice} --rate {rate}",
+                                                        stderr=subprocess.PIPE,
+                                                        stdout=subprocess.PIPE,
+
+                                                        ) as self.playback:
+        
+            try:
+                self.playback.communicate()
+            except:
+                self.playback.kill()
             
 
-        input.text = "Chat with Enzo:"
-        self.query = False
-        return
+        
+    
+    async def shutdown(self):
+        pass
+
+    async def killPlayback(self):
+        self.terminatePlaybackFlag = True
+        self.playback.kill()
+        self.playback.terminate()
+
         

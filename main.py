@@ -1,14 +1,43 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Static, ProgressBar, Select, TextArea, Footer
-from textual.containers import Container, Center, VerticalScroll
+from textual.containers import Container, Center, Vertical
 from textual.binding import Binding
 from textual.reactive import reactive
 from textual.screen import Screen
 from textual.events import Key
 from textual import on, work
-import asyncio, json
+import asyncio, json, shutil
 
 
+# Modal Screen for menu soon to be implemented.
+# Previous Code for menu for template:
+"""
+modelOptions = []
+        for i in range(len(self.config["modelsAvailable"])):
+            modelOptions.append((self.config["modelsAvailable"][i]["name"], self.config["modelsAvailable"][i]["id"])) #NOTE: corresponds to ["id"] for loading btw
+
+        SelectModel = Select(
+                options=modelOptions,
+                prompt="Select Model",
+                id="model-select",
+            )
+        
+        voiceOptions = []
+        for i in range(len(self.config["voicesAvailable"])):
+            voiceOptions.append((self.config["voicesAvailable"][i]["name"], self.config["voicesAvailable"][i]["id"]))
+
+        SelectVoice = Select(
+            options=voiceOptions,
+            prompt="Select TTS Voice:",
+            id="voice-select"
+            )
+        
+        menuContainer =  VerticalScroll(SelectModel,
+                                        SelectVoice,
+                                         id="menu")
+        menuContainer.border_title = "Enzo version 1.0.1"
+        yield menuContainer
+"""
 
 class LoadingScreen(Screen):
     CSS_PATH = "load.tcss"
@@ -29,10 +58,9 @@ class LoadingScreen(Screen):
     def on_mount(self) -> None:
         # Now self is available — safe to assign functions
         self.loading_steps = [
-            ("Starting Setup", 10, None),
             ("Loading Configuration Files", 15, self.getConfig),
+            ("Starting Setup", 10, self.startSetup),
             ("Establishing Model Connection", 10, self.startLLM),
-            ("Starting Text-to-Speech Service", 5, self.loadTTS),
             ("Finalizing Setup", 5, self.finalize_setup)
         ]
 
@@ -75,9 +103,15 @@ class LoadingScreen(Screen):
         self.set_step()
 
         # Functions to be called during loading steps
+
     def getConfig(self):
         with open("config.json") as f:
             self.config = json.load(f)
+
+    def startSetup(self):
+        shutil.rmtree(self.config["cacheDirectory"])
+        os.mkdir(self.config["cacheDirectory"])
+
 
     def startLLM(self):
         from ollamaUtils import model
@@ -85,14 +119,10 @@ class LoadingScreen(Screen):
         self.llm.startOllama()
         self.llm.createModel()
         self.llm.loadHistory()
-
-    def loadTTS(self):
-        from ttsWrapper import voice
-        self.tts = voice(self.config)
-        self.tts.clearCache()
+        
 
     def finalize_setup(self):
-        self.app.install_screen(Dashboard(self.config,self.tts,self.llm), "Dashboard")
+        self.app.install_screen(Dashboard(self.config,self.llm), "Dashboard")
         self.dismiss(1)
 
 
@@ -104,80 +134,87 @@ class Dashboard(Screen):
         
     ]
 
-    def __init__(self, config, tts, llm):
+    def __init__(self, config, llm):
         super().__init__()
         self.config = config
-        if tts:
-            self.tts = tts
-        else: 
-            self.ttsEnabled = False
-            self.tts = None
         self.llm = llm
 
     def compose(self) -> ComposeResult:
+        logo = Static(
+            r"""
+    ___   ___ _  
+    |_ |\| _// \ 
+    |__| |/__\_/ 
+        """
+            , id="logo")
         # Top-left: Menu container
-        modelOptions = []
-        for i in range(len(self.config["modelsAvailable"])):
-            modelOptions.append((self.config["modelsAvailable"][i]["name"], self.config["modelsAvailable"][i]["id"])) #NOTE: corresponds to ["id"] for loading btw
-
-        SelectModel = Select(
-                options=modelOptions,
-                prompt="Select Model",
-                id="model-select",
-            )
-        
-        voiceOptions = []
-        for i in range(len(self.config["voicesAvailable"])):
-            voiceOptions.append((self.config["voicesAvailable"][i]["name"], self.config["voicesAvailable"][i]["id"]))
-
-        SelectVoice = Select(
-            options=voiceOptions,
-            prompt="Select TTS Voice:",
-            id="voice-select"
-            )
-        
-        menuContainer =  VerticalScroll(SelectModel,
-                                        SelectVoice,
-                                         id="menu")
-        menuContainer.border_title = "Enzo version 1.0.1"
-        yield menuContainer
+        AIstatus = Static("Chat with Enzo:", id="ai-status")
+        #AIstatus.expand = True        
         
         # Bottom-left: AI output area
+
         AIoutput = Static("AI output will appear here...", id="ai-output")
-        AIoutput.border_title = "Enzo says:"
+        AIoutput.border_title = "Enzo V:beta"
         AIoutput.expand = True
-        yield AIoutput
+
 
         # Right: User input text area (spans both rows)
-        userInput = TextArea("Type your AI prompt here...", id="user-input", name="Input")
-        userInput.border_title = "User Input"
-        yield userInput
+        userInput = TextArea("", id="user-input", name="Input")
+        #userInput.border_title = "User Input"
+
+        statusAndInput = Container(AIstatus, userInput, id = "statusAndInput")
+        statusAndInput.border_title = "User Input:"
+        yield logo
+        
+        yield AIoutput
+        yield statusAndInput
         yield Footer()
 
+
+    
     async def action_run_ai_task(self) -> None:
         """Action to run the AI task when the button is pressed."""
         #model_select = self.query_one("#model-select", Select)
         #tts_select = self.query_one("#tts-select", Select)
         self.user_input = self.query_one("#user-input", TextArea)
         self.ai_output = self.query_one("#ai-output", Static)
+        self.ai_status = self.query_one("#ai-status", Static)
 
         #model = model_select.value
         #tts = tts_select.value
+        
+        title = "Enzo V:beta >> "
+        if len(self.user_input.text.split(" ")) > 7:
+            title += str(' '.join(self.user_input.text.split(" ")[:7])) + ".."
+        else:
+            title += self.user_input.text
+
+        self.ai_output.border_title = title
+
         self.llm.question = self.user_input.text
         self.run_ai_task()
-        self.user_input.text = "Query sent to AI. Waiting for response..."
+        self.ai_status.update(content = "Enzo is thinking..")
         self.user_input.text = ""  # Clear user input after processing
 
     @work(exclusive=True)
     async def run_ai_task(self) -> None:
         """Run the AI task and update the AI output area."""
-        self.user_input.text = "Processing your query..."
-        await self.llm.startQuery(self.user_input ,self.ai_output)  # Pass the Static widget to update directly
+        asyncio.create_task(self.llm.startQuery(self.ai_status ,self.ai_output))  # Pass the Static widget to update directly
+
+    async def on_key(self, event: Key) -> None:
+        if event.key == "q":
+            await self.action_quit()
+
+    async def action_quit(self) -> None:   
+
+        self.dismiss()
+        
         
         
 
     async def on_exit(self) -> None:
-        await self.llm.saveHistory()
+        self.llm.killPlayback()
+        self.llm.saveHistory()
         self.llm.closeConnection()
 
 
@@ -201,9 +238,6 @@ class mainApp(App):
             await self.action_quit()
 
     async def action_quit(self) -> None:           
-
-
-
         self.exit()
         super().exit()
         
