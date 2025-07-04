@@ -24,7 +24,7 @@
 - [x] Prompt history & management
 - [ ] Menu functionality
 - [ ] Update website
-- [ ] Fix unclosed Client session
+- [x] Fix unclosed Client session
 - [x] Make Load + App screens so no pause after load
 - [ ] Enhanced error handling & logging
 - [ ] Rename files & simple cleanup.
@@ -32,11 +32,16 @@
 - [ ] Installer packaging (Windows, macOS, Linux)
 
 ## Current Flaws:
-- [ ] Unclosed Client Session bug
-- [ ] TTS bigChunk broken
+(see To-Do list)
+- [ ] Error Handling
+- [ ] Lack of Menu
+- [ ] Load Speeds
+
+- [x] Unclosed Client Session bug
+- [x] TTS bigChunk broken (Removed entirely)
 - [x] Ollama streaming can intersect itself. flag needed
-- [ ] Playsound an absolute mess
-- [ ] Messy Codebase
+- [x] Playsound an absolute mess (fixed but not much better)
+- [x] Messy Codebase
 ---
 
 ## 🤝 Contributing
