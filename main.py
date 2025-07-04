@@ -164,15 +164,17 @@ class Dashboard(Screen):
         #model = model_select.value
         #tts = tts_select.value
         self.llm.question = self.user_input.text
-        asyncio.create_task(self.run_ai_task())
+        self.run_ai_task()
+        self.user_input.text = "Query sent to AI. Waiting for response..."
+        self.user_input.text = ""  # Clear user input after processing
 
+    @work(exclusive=True)
     async def run_ai_task(self) -> None:
         """Run the AI task and update the AI output area."""
         self.user_input.text = "Processing your query..."
-        asyncio.create_task(self.llm.startQuery(self.ai_output))  # Pass the Static widget to update directly
+        await self.llm.startQuery(self.user_input ,self.ai_output)  # Pass the Static widget to update directly
         
-        self.user_input.text = "Query sent to AI. Waiting for response..."
-        self.user_input.text = ""  # Clear user input after processing
+        
 
     async def on_exit(self) -> None:
         await self.llm.saveHistory()
@@ -210,5 +212,7 @@ class mainApp(App):
 
 
 if __name__ == "__main__":
+    import os
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     app = mainApp()
     app.run()

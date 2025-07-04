@@ -1,7 +1,9 @@
 import json, os, time
 from ollama import AsyncClient
-import asyncio, subprocess, requests
+import asyncio, subprocess, requests, edge_tts, wave, sys, pyaudio, time
 from openai.helpers import LocalAudioPlayer
+import pygame
+
 class model:
     def __init__(self, config):
         super().__init__()
@@ -72,25 +74,65 @@ class model:
         # Properly close any aiohttp session from AsyncClient
         #await self.client.close()
     
-    async def startQuery(self, output, tts = None) -> None:
+    async def startQuery(self, input, output, tts = None) -> None:
             if self.query == False:
                 self.query = True
                 self.fullMessage = ""
                 self.lastPart = ""
-                
+                id = time.strftime("%d%b%Y-%H%M%S")
+                audioFile = f"{self.config['cacheDirectory']}/{id}.mp3"
                 async for part in await self.client.chat(model = self.config["modelsAvailable"][self.config["modelIndex"]]["id"], messages = [*self.previousMessages,*self.currentMessages,{"role": "user", "content" : self.question}],stream = True):
                         self.fullMessage += part["message"]["content"]
                         self.lastPart = part["message"]["content"]
-                        
+                            
                         output.update(content = self.fullMessage)
+                            
 
-                                
+
+                
                                 
 
                 self.currentMessages += [
                         {"role": "user", "content" : self.question},
                         {"role": "assistant", "content" : self.fullMessage}
                     ]
-                self.query = False
+                await self.makeNoise(input)
+                
+                #async for chunk in edge_tts.Communicate(data, voice, rate = f"{ratePrefix}{str(rate)}%").stream():
+                #    if chunk["type"] == "audio" and "data" in chunk:
+                #        with open(audioFile, "ab") as self.file:
+                #            self.file.write(chunk["data"])
+
             else:
                 pass
+
+
+    async def makeNoise(self, input):
+        """TTS FUNCTIONALITY"""
+
+                #rate = #rate increase of voice.
+                
+        audioFile = f"{self.config['cacheDirectory']}/{time.strftime('%D%M%Y%a%d')}.mp3"
+
+        rate = self.config["rate"] - 100
+        if rate >= 0:
+            ratePrefix = "+"
+        else:
+            ratePrefix = "-"
+
+        with open(f"{self.config['cacheDirectory']}/temp.txt", "w") as f:
+            f.write(self.fullMessage)
+
+        voice = self.config["voice"]
+        rate = ratePrefix + str(rate) + "%"
+
+        playback = subprocess.Popen(f"edge-playback --file {self.config['cacheDirectory']}/temp.txt --voice {voice} --rate {rate}"
+                                    , stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (out, err) = playback.communicate()
+        playback.terminate()
+            
+
+        input.text = "Chat with Enzo:"
+        self.query = False
+        return
+        
