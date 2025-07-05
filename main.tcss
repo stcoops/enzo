@@ -1,0 +1,36 @@
+Screen {
+        layout: grid;
+        grid-size: 2 2;
+        grid-columns: 3fr 7fr;
+        grid-rows: 1fr 3fr;
+        background: rgb(30, 30, 30);
+    }
+
+    #ai-status {
+        align: center middle;
+    }
+
+    #logo {
+        align: center middle;
+    }
+
+    #ai-output {
+        border: round rgb(120, 120, 120);
+        border-title-align: center;
+        margin: 1 2 1 0; /* Margin: top, right, bottom, left */
+        row-span: 2;  /* Spans both rows */
+        height: 100%;
+    }
+
+
+    #statusAndInput {
+        border: round rgb(120, 120, 120);
+        border-title-align: center;
+        margin: 0 0 1 2;
+        
+    }
+
+    TextArea {
+        background: rgb(30, 30, 30);
+        color: rgb(210, 210, 210);
+    }
