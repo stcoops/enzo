@@ -105,20 +105,28 @@ class LoadingScreen(Screen):
         # Functions to be called during loading steps
 
     def getConfig(self):
-        with open("config.json") as f:
-            self.config = json.load(f)
+        try:
+            with open("config.json") as f:
+                self.config = json.load(f)
+        except:
+            return FileNotFoundError("File: config.json could not be found.")
 
     def startSetup(self):
-        shutil.rmtree(self.config["cacheDirectory"])
-        os.mkdir(self.config["cacheDirectory"])
-
+        try:
+            shutil.rmtree(self.config["cacheDirectory"])
+            os.mkdir(self.config["cacheDirectory"])
+        except:
+            return FileNotFoundError(self.config["cacheDirectory"], " Directory not foujnd")
 
     def startLLM(self):
-        from ollamaUtils import model
-        self.llm = model(self.config)
-        self.llm.startOllama()
-        self.llm.createModel()
-        self.llm.loadHistory()
+        try:
+            from ollamaUtils import model
+            self.llm = model(self.config)
+            self.llm.startOllama()
+            self.llm.createModel()
+            self.llm.loadHistory()
+        except:
+            return ImportError("Backend for Enzo could not be Imported.")
         
 
     def finalize_setup(self):
