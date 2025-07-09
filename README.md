@@ -59,6 +59,7 @@ This project will be licensed under the MIT License once released.
 
 ## 🎨 Preview
 
+![Loading Screen](https://github.com/stcoops/enzo/blob/main/site/images/Loadscreen.png)
 ![Dashboard](https://github.com/stcoops/enzo/blob/main/site/images/Enzo.png)
 
 ---
